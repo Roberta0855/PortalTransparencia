@@ -51,9 +51,16 @@ function App() {
         </select>
 
         <button onClick={buscarDados}>Buscar</button>
+        
       </div>
-
+      
       <div className="cards">
+        <div className="HeaderTable">
+          <p>Credor</p>
+          <p>Data</p>
+          <p>Descrição</p>
+          <p>Valor</p>
+        </div>
         {dados.map((item, index) => (
           <DespesaCard key={index} item={item} />
         ))}

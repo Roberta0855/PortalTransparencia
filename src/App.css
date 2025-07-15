@@ -29,7 +29,11 @@ h1 {
 }
 
 .cards {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: flex;
+  flex-direction: column;
+}
+.HeaderTable{
+  display: flex;
+  justify-content: space-between;
+  color: #000;
 }
