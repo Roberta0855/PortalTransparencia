@@ -9,7 +9,7 @@ function ExpandableText({ text, maxLength = 100 }) {
     : text.slice(0, maxLength) + "...";
 
   return (
-    <div style={{ display: "inline", wordWrap: "break-word", wordBreak: "break-word" }}>
+    <span style={{ display: "inline", wordWrap: "break-word", wordBreak: "break-word" }}>
       {displayText}
       {isTruncated && (
         <button
@@ -28,7 +28,7 @@ function ExpandableText({ text, maxLength = 100 }) {
           {expanded ? "ver menos" : "ver mais"}
         </button>
       )}
-    </div>
+    </span>
   );
 }
 
