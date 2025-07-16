@@ -1,6 +1,5 @@
 body {
   margin: 0;
-  background: #f5f7fa;
   font-family: "Segoe UI", sans-serif;
 }
 
@@ -9,7 +8,7 @@ body {
 }
 
 h1 {
-  color: #1a237e;
+  color: #e2e2e2;
   text-align: center;
 }
 
@@ -28,12 +27,26 @@ h1 {
   font-size: 1rem;
 }
 
-.cards {
-  display: flex;
-  flex-direction: column;
+/* Grid comum para header e cards */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 25% 15% 40% 20%;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 0.5rem;
 }
+
+/* Cabeçalho da tabela */
 .HeaderTable{
   display: flex;
-  justify-content: space-between;
+
+}
+.HeaderTable span {
+ 
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: bold;
   color: #000;
+  text-align: left;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }

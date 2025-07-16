@@ -1,22 +1,31 @@
 .card {
-  background: white;
+  display: contents; /* Cada <p> ocupa uma célula no grid do pai */
+}
+
+.card p {
+  /* background: white; */
+  background-color: #2c2c2c;
+  padding: 0.8rem;
   border-radius: 8px;
-  padding: 1rem;
+  margin: 0;
+  color: #000;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 93%; /* ✅ essencial para evitar expansão lateral */
+  max-height: 500px;
+  min-height: 60px;
+  
+  color: #fff;
 }
-
-.card h3 {
-  margin-top: 0;
-  color: #303f9f;
+.HeaderTable p{
+  color: #fff;
+  font-size: 1.2rem;
 }
+select, input, button{
+  background-color: #fff;
+  color: #000;
 
+  border-radius: 10px;
 
-.card h3 {
-  margin-top: 0;
-  color: #303f9f;
-}
-.card p{
-   color: #000000;
 }

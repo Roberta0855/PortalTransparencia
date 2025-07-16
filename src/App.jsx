@@ -9,8 +9,10 @@ function App() {
   const [mes, setMes] = useState(1);
   const [codigoUG, setCodigoUG] = useState("");
   const [dados, setDados] = useState([]);
+  const [loading, setLoading] = useState(false); // ✅ estado de carregamento
 
   const buscarDados = async () => {
+    setLoading(true); // ✅ inicia loading
     try {
       const response = await axios.get(
         `https://transparencia.ma.gov.br/api/consulta-despesas?ano=${ano}&mes=${mes}&codigo_ug=${codigoUG}`
@@ -18,6 +20,8 @@ function App() {
       setDados(response.data);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
+    } finally {
+      setLoading(false); // ✅ finaliza loading
     }
   };
 
@@ -50,20 +54,36 @@ function App() {
           ))}
         </select>
 
-        <button onClick={buscarDados}>Buscar</button>
-        
+        <button onClick={buscarDados} disabled={loading}>
+          {loading ? "Carregando..." : "Buscar"}
+        </button>
       </div>
-      
+
       <div className="cards">
-        <div className="HeaderTable">
-          <p>Credor</p>
-          <p>Data</p>
-          <p>Descrição</p>
-          <p>Valor</p>
-        </div>
-        {dados.map((item, index) => (
-          <DespesaCard key={index} item={item} />
-        ))}
+        {/* ✅ Loading visível enquanto carrega */}
+        {loading && (
+          <p style={{ textAlign: "center", fontStyle: "italic", marginTop: "1rem" }}>
+            Carregando dados...
+          </p>
+        )}
+
+        {/* ✅ Só mostra a tabela quando não está carregando */}
+        {!loading && dados.length > 0 && (
+          <>
+            <div className="HeaderTable">
+              <p>Credor</p>
+              <p style={{ marginLeft: "23%" }}>Data</p>
+              <p style={{ marginLeft: "14%" }}>Descrição</p>
+              <p style={{ marginLeft: "37.5%" }}>Valor</p>
+            </div>
+
+            <div className="grid-layout">
+              {dados.map((item, index) => (
+                <DespesaCard key={index} item={item} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
