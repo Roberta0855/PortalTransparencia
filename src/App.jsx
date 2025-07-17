@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
 import { unidades } from "./data/Unidades";
@@ -9,10 +9,14 @@ function App() {
   const [mes, setMes] = useState(1);
   const [codigoUG, setCodigoUG] = useState("");
   const [dados, setDados] = useState([]);
-  const [loading, setLoading] = useState(false); // ✅ estado de carregamento
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState(null);
 
   const buscarDados = async () => {
-    setLoading(true); // ✅ inicia loading
+    setLoading(true);
+    setErro(null);
+    setDados([]);
+
     try {
       const response = await axios.get(
         `https://transparencia.ma.gov.br/api/consulta-despesas?ano=${ano}&mes=${mes}&codigo_ug=${codigoUG}`
@@ -20,24 +24,30 @@ function App() {
       setDados(response.data);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
+      setErro("Erro ao buscar dados. Tente novamente.");
     } finally {
-      setLoading(false); // ✅ finaliza loading
+      setLoading(false);
     }
   };
+
+  const anosDisponiveis = Array.from({ length: new Date().getFullYear() - 2018 }, (_, i) => 2019 + i);
 
   return (
     <div className="container">
       <h1>Portal da Transparência do Maranhão</h1>
 
       <div className="filtros">
-        <input
-          type="number"
-          value={ano}
-          onChange={(e) => setAno(e.target.value)}
-          placeholder="Ano"
-        />
+        {/* ✅ Seletor de ano de 2019 até o atual */}
+        <select value={ano} onChange={(e) => setAno(Number(e.target.value))}>
+          {anosDisponiveis.map((anoOp) => (
+            <option key={anoOp} value={anoOp}>
+              Ano {anoOp}
+            </option>
+          ))}
+        </select>
 
-        <select value={mes} onChange={(e) => setMes(e.target.value)}>
+
+        <select value={mes} onChange={(e) => setMes(Number(e.target.value))}>
           {Array.from({ length: 12 }, (_, i) => (
             <option value={i + 1} key={i + 1}>
               Mês {i + 1}
@@ -60,14 +70,16 @@ function App() {
       </div>
 
       <div className="cards">
-        {/* ✅ Loading visível enquanto carrega */}
         {loading && (
           <p style={{ textAlign: "center", fontStyle: "italic", marginTop: "1rem" }}>
             Carregando dados...
           </p>
         )}
 
-        {/* ✅ Só mostra a tabela quando não está carregando */}
+        {erro && (
+          <p style={{ color: "red", textAlign: "center", marginTop: "1rem" }}>{erro}</p>
+        )}
+
         {!loading && dados.length > 0 && (
           <>
             <div className="HeaderTable">
