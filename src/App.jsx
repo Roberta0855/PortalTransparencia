@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 import { unidades } from "./data/Unidades";
@@ -11,17 +11,29 @@ function App() {
   const [dados, setDados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState(null);
+  const [quantidade, setQuantidade] = useState(0); // ✅ Novo estado
 
   const buscarDados = async () => {
     setLoading(true);
     setErro(null);
     setDados([]);
+    setQuantidade(0);
 
     try {
       const response = await axios.get(
         `https://transparencia.ma.gov.br/api/consulta-despesas?ano=${ano}&mes=${mes}&codigo_ug=${codigoUG}`
       );
-      setDados(response.data);
+
+      const resultado = response.data;
+
+      if (!resultado || resultado.length === 0 || resultado.flat().length === 0) {
+        setErro("Nenhuma movimentação encontrada para os filtros escolhidos.");
+        return;
+      }
+
+      setDados(resultado);
+      setQuantidade(resultado.flat().length); // ✅ Atualiza quantidade
+
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
       setErro("Erro ao buscar dados. Tente novamente.");
@@ -30,14 +42,16 @@ function App() {
     }
   };
 
-  const anosDisponiveis = Array.from({ length: new Date().getFullYear() - 2018 }, (_, i) => 2019 + i);
+  const anosDisponiveis = Array.from(
+    { length: new Date().getFullYear() - 2018 },
+    (_, i) => 2019 + i
+  );
 
   return (
     <div className="container">
       <h1>Portal da Transparência do Maranhão</h1>
 
       <div className="filtros">
-        {/* ✅ Seletor de ano de 2019 até o atual */}
         <select value={ano} onChange={(e) => setAno(Number(e.target.value))}>
           {anosDisponiveis.map((anoOp) => (
             <option key={anoOp} value={anoOp}>
@@ -45,7 +59,6 @@ function App() {
             </option>
           ))}
         </select>
-
 
         <select value={mes} onChange={(e) => setMes(Number(e.target.value))}>
           {Array.from({ length: 12 }, (_, i) => (
@@ -69,6 +82,13 @@ function App() {
         </button>
       </div>
 
+      {/* ✅ Exibir quantidade de movimentações */}
+      {!loading && quantidade > 0 && (
+        <p style={{ marginTop: "1rem", fontWeight: "bold", fontSize: "1.1rem", textAlign: "center" }}>
+          Foram encontradas {quantidade} movimentações financeiras.
+        </p>
+      )}
+
       <div className="cards">
         {loading && (
           <p style={{ textAlign: "center", fontStyle: "italic", marginTop: "1rem" }}>
@@ -90,7 +110,7 @@ function App() {
             </div>
 
             <div className="grid-layout">
-              {dados.map((item, index) => (
+              {dados.flat().map((item, index) => (
                 <DespesaCard key={index} item={item} />
               ))}
             </div>
